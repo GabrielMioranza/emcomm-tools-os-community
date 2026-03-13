@@ -1,7 +1,8 @@
 #!/bin/bash
 # Author   : Gaston Gonzalez
 # Date     : 1 October 2024
-# Updated  : 4 OCtober 2024
+# Updated  : 4 October 2024
+# Updated  : 12 March 2026 (Ubuntu 24.04 LTS compatibility)
 # Purpose  : Navit installer for EmComm Tools
 # Category : Maps
 #
@@ -11,13 +12,25 @@
 # navit-gui-internal required for car display
 # navit-graphics-gtk-drawing-area required for desktop display
 
+# Install navit and available sub-packages; some split packages may not exist in 24.04
 apt install \
   navit \
   navit-gui-gtk \
   navit-graphics-gtk-drawing-area \
   navit-gui-internal \
-  libcanberra-gtk-dev \
   maptool \
   espeak \
   osmium-tool \
-  -y 
+  -y || true
+
+# Repair any broken dependencies left by partial navit install
+apt-get -f install -y
+
+# libcanberra-gtk-dev was renamed in Ubuntu 24.04
+if apt-cache show libcanberra-gtk-dev &>/dev/null; then
+  apt install libcanberra-gtk-dev -y
+elif apt-cache show libcanberra-gtk3-dev &>/dev/null; then
+  apt install libcanberra-gtk3-dev -y
+else
+  et-log "libcanberra-gtk-dev not found, skipping."
+fi
