@@ -2,7 +2,7 @@
 # Author   : Gaston Gonzalez
 # Date     : 4 November 2024
 # Updated  : 3 December 2024
-# Updated  : 12 March 2026 (added Brazil support - GabrielMioranza)
+# Updated  : 12 March 2026 (added Brazil and United Kingdom support - GabrielMioranza)
 # Purpose  : Downloads OSM .pbf file selected by user
 
 # Location to store OSM .pbf files
@@ -11,9 +11,10 @@ PBF_MAP_DIR=/etc/skel/my-maps
 [ ! -e ${PBF_MAP_DIR} ] && mkdir -v ${PBF_MAP_DIR}
 
 # Step 1: Select country/region
-COUNTRY=$(dialog --clear --menu "Select a country/region:" 12 55 4 \
+COUNTRY=$(dialog --clear --menu "Select a country/region:" 14 55 5 \
   "us" "United States (state level)" \
   "br" "Brazil (region level)" \
+  "uk" "United Kingdom (England/Scotland/Wales)" \
   3>&1 1>&2 2>&3)
 
 exit_status=$?
@@ -37,6 +38,12 @@ elif [ "${COUNTRY}" == "br" ]; then
   GEOFABRIK_BASE="https://download.geofabrik.de/south-america"
   HREF_FILTER='href="brazil/'
   SUBDIR="brazil"
+elif [ "${COUNTRY}" == "uk" ]; then
+  HTML=page_uk.html
+  URL=https://download.geofabrik.de/europe/great-britain.html
+  GEOFABRIK_BASE="https://download.geofabrik.de/europe"
+  HREF_FILTER='href="great-britain/'
+  SUBDIR="great-britain"
 fi
 
 # Step 3: Download map listing page if not cached
