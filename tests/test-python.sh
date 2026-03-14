@@ -4,7 +4,8 @@
 # Updated  : 12 March 2026 (accept Python 3 on Ubuntu 24.04)
 # Purpose  : Test Python installation
 
-# Python 2.7 is used on Ubuntu 22.10 (Kinetic).
-# Python 3.x is used on Ubuntu 24.04 (Noble) since Python 2 is not in the repos.
-OUT=$(python --version 2>&1 | grep -E "2\.7|3\.")
-exit $?
+# Check for python (2.7 on Kinetic, or 3.x on Noble via update-alternatives).
+# Fall back to python3 if the python symlink was not created.
+python --version 2>&1 | grep -qE "2\.|3\." && exit 0
+python3 --version 2>&1 | grep -q "3\." && exit 0
+exit 1

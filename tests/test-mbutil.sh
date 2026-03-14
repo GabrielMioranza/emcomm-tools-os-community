@@ -4,15 +4,9 @@
 # Updated  : 12 March 2026 (handle Python 3 install path differences on Ubuntu 24.04)
 # Purpose  : Test mb-util installation
 
-# On Python 2, setup.py installs mb-util to /usr/local/bin.
-# On Python 3 (Ubuntu 24.04), it may land in /usr/local/bin or ~/.local/bin.
-# Check both which and known fallback paths.
-if which mb-util &>/dev/null; then
-  exit 0
-elif [ -f /usr/local/bin/mb-util ]; then
-  exit 0
-elif python3 -c "import mbutil" &>/dev/null 2>&1; then
-  exit 0
-else
-  exit 1
-fi
+# Check for mb-util binary, then fall back to verifying the Python package
+# directly since setup.py on Python 3.12 may not register the binary in PATH.
+which mb-util 2>/dev/null && exit 0
+pip3 show mbutil 2>/dev/null | grep -q "^Name" && exit 0
+pip show mbutil 2>/dev/null | grep -q "^Name" && exit 0
+exit 1
