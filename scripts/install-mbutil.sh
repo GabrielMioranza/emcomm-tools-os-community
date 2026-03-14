@@ -35,14 +35,14 @@ tar -xzf "${ET_DIST_DIR}/${DOWNLOAD_FILE}"
 mv "${APP}-${VERSION}" ${ET_SRC_DIR} && cd ${SRC_DIR}
 
 et-log "Installing ${APP} ${VERSION} globally..."
-# setup.py install was removed in Python 3.12; use pip install which works
-# on both Python 2 (Kinetic) and Python 3 (Noble).
-if command -v pip3 &>/dev/null; then
-  pip3 install .
-elif command -v pip &>/dev/null; then
+# setup.py install was removed in Python 3.12 (Ubuntu 24.04).
+# On Noble, pip requires --break-system-packages to install outside a venv.
+# On Kinetic (Python 2), plain pip install suffices.
+UBUNTU_CODENAME=$(lsb_release -cs 2>/dev/null || echo "unknown")
+if [ "${UBUNTU_CODENAME}" == "kinetic" ]; then
   pip install .
 else
-  python setup.py install
+  pip3 install . --break-system-packages
 fi
 
 cd $CWD_DIR
