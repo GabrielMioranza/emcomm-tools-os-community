@@ -35,6 +35,14 @@ tar -xzf "${ET_DIST_DIR}/${DOWNLOAD_FILE}"
 mv "${APP}-${VERSION}" ${ET_SRC_DIR} && cd ${SRC_DIR}
 
 et-log "Installing ${APP} ${VERSION} globally..."
-python setup.py install
+# setup.py install was removed in Python 3.12; use pip install which works
+# on both Python 2 (Kinetic) and Python 3 (Noble).
+if command -v pip3 &>/dev/null; then
+  pip3 install .
+elif command -v pip &>/dev/null; then
+  pip install .
+else
+  python setup.py install
+fi
 
 cd $CWD_DIR
